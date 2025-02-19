@@ -1,2 +1,0 @@
-source lineserverenv/bin/activate
-python line_server.py file_served.txt

@@ -1,3 +1,0 @@
-python3 -m venv lineserverenv
-source lineserverenv/bin/activate
-pip install "fastapi[standard]" aiofiles
