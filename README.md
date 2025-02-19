@@ -1,12 +1,19 @@
 ### How does your system work? (if not addressed in comments in source)
 
-Pre-process the file line by line, to avoid loading the entire file into memory. Save the character offset of every 10000th line in an index. For each request, go to the nearest index entry, read line by line until the specified line is found and return the line.
+First, the system pre-processes the file line by line, to avoid loading the entire file into memory. Then, it saves the character offset of every 10000th line in an index called `LINE_INDEX`.
+
+Then, the server is started. For each request, the system gets the nearest index entry to the  requested line and, starting from the retrieved offset, reads line by line until the specified line is found and returns the line.
 
 
 
 ### How will your system perform with a 1 GB file? a 10 GB file? a 100 GB file?
 
-Pre-processing will take proportionally longer with bigger files. Responding to each request will be the same speed, regardless of file size. If the file gets too big, the index may not fit in memory, and we'd have to move it to a separate database.
+Pre-processing will take proportionally longer with bigger files:
+14MB file -> 5 seconds
+1 GB file -> 179 seconds
+10 GB file -> 1790 seconds (estimate)
+
+Responding to each request is the same speed, regardless of file size. If the file gets too big, the index may not fit in memory, and we'd have to move it to a separate database. The number of elements in `LINE_INDEX` is `<number of lines in file> / 10000`. A file with 1 million lines would have 100 list elements, so it is a residual amount. If the `INDEX_INTERVAL` was reduced, this may deserve more consideration.
 
 
 
@@ -43,9 +50,17 @@ FastAPI was chosen for high performance, as well as async capabilities. aiofiles
 
 ### How long did you spend on this exercise? If you had unlimited more time to spend on this, how would you spend it and how would you prioritize each item?
 
-6-8 hours. If I had unlimited time, I would start by adding a cache. I would move the line index to a separate database, like Redis. I would also experiment with the `INDEX_INTERVAL` value, to see which number would get the best overall results for our specific use case. I would also scale the system horizontally, allowing more requests to be served concurrently.
+6-8 hours.
 
-If the priority is handling bigger files, my first step would be to use Redis for the index. Then, I would add a cache, then scale horizontally.
+If I had unlimited time, I would:
+- Add a cache
+- Store the line index to a separate database, which would allow it to grow bigger than the available memory in case of really big files and/or a reduction of `INDEX_INTERVAL`. It would also allow pre-processing to only be done once in case of horizontal scaling (since the servers would all read from the same database)
+- Experiment with the `INDEX_INTERVAL` value (currently 10000), to see which number would get the best overall results for our specific use case. The number 10000 was chosen arbitrarily and seems to give acceptable results
+- Scale the system horizontally, allowing more requests to be served concurrently
+- Split the file in chunks and pre-process it in parallel
+
+I would start by adding a cache, then storing the index in a separate database and then scale horizontally.
+
 
 
 
