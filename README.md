@@ -43,7 +43,9 @@ FastAPI was chosen for high performance, as well as async capabilities. aiofiles
 
 ### How long did you spend on this exercise? If you had unlimited more time to spend on this, how would you spend it and how would you prioritize each item?
 
-6-8 hours. I had to learn more about file reading than I ever had to before. If I had unlimited time, I would start by adding a cache. Then I would move the line index to a separate database, like Redis.
+6-8 hours. If I had unlimited time, I would start by adding a cache. I would move the line index to a separate database, like Redis. I would also experiment with the `INDEX_INTERVAL` value, to see which number would get the best overall results for our specific use case. I would also scale the system horizontally, allowing more requests to be served concurrently.
+
+If the priority is handling bigger files, my first step would be to use Redis for the index. Then, I would add a cache, then scale horizontally.
 
 
 
