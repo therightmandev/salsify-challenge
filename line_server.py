@@ -3,7 +3,7 @@ import sys
 import uvicorn
 
 from fastapi import FastAPI, Response, status
-from time import perf_counter_ns
+from time import perf_counter_ns, perf_counter
 
 
 app = FastAPI()
@@ -19,6 +19,7 @@ INDEX_INTERVAL = 10000
 
 def create_index():
     print("creating index")
+    time_counter_start = perf_counter()
     line_index = []
     i = 0
     with open(FILE, mode="r", encoding="ascii") as f:
@@ -32,7 +33,8 @@ def create_index():
             offset = f.tell()
             line = f.readline()
             i += 1
-    print(f"Processed {i} lines")
+    print(f"{perf_counter() - time_counter_start} ns")
+    print(f"Processed {i} lines in {perf_counter() - time_counter_start} seconds")
     print("returning index")
     return line_index, i
 
@@ -55,9 +57,9 @@ async def get_line_endpoint(line_number: int, response: Response):
     if line_number >= LINE_COUNT:
         response.status_code = status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
         return ""
-    t1_start = perf_counter_ns()
+    time_counter_start = perf_counter_ns()
     line = await get_line(line_number)
-    print(f"{perf_counter_ns() - t1_start} ns")
+    print(f"{perf_counter_ns() - time_counter_start} ns")
     return f"{line}"
 
 
