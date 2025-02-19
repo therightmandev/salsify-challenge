@@ -81,4 +81,4 @@ I would start by adding tests, then a cache, then storing the index in a separat
 
 ### If you were to critique your code, what would you have to say about it?
 
-The code is lacking exception handling, input validation, caching and tests. The index is saved in memory, which puts a size limit on it. I could also move the pre-processing code to a different file, especially if it was part of a bigger project.
+The code is lacking exception handling, input validation, caching and tests. The index is saved in memory, which puts a size limit on it. I could also move the pre-processing code to a different file, especially if it was part of a bigger project. Logging should be performed using Python's `logging` module, instead of using `print` statements.
