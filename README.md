@@ -2,7 +2,7 @@
 
 First, the system pre-processes the file line by line, to avoid loading the entire file into memory. Then, it saves the character offset of every 10000th line in an index called `LINE_INDEX`.
 
-Then, the server is started. For each request, the system gets the closest index entry to the  requested line (for line 21000, it get `LINE_INDEX[2]`, which corresponds to line 20000) and, starting from the retrieved offset, reads line by line until the specified line is found and returns the line.
+Then, the server is started. For each request, the system gets the closest index entry to the  requested line (for line 21000, it gets `LINE_INDEX[2]`, which corresponds to line 20000) and, starting from the retrieved offset, reads line by line until the specified line is found and returns the line.
 
 
 
