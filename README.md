@@ -6,19 +6,22 @@ Then, the server is started. For each request, the system gets the nearest index
 
 
 
+
 ### How will your system perform with a 1 GB file? a 10 GB file? a 100 GB file?
 
 Pre-processing will take proportionally longer with bigger files:
 - 14MB file -> 5 seconds
 - 1 GB file -> 179 seconds
-- 10 GB file -> 1790 seconds (estimate)
+- 10 GB file -> ~1790 seconds (estimate)
 
 Responding to each request is the same speed, regardless of file size.
 For example, here’s the average response time for a test I ran with 2 different files:
 - 14 MB file -> 0.0401 seconds
 - 1 GB file -> 0.0371 seconds
+- 10 GB file -> ~0.04 seconds (estimate)
 
 If the file gets too big, the index may not fit in memory, and we'd have to move it to a separate database. The number of elements in `LINE_INDEX` is `<number of lines in file> / 10000`. A file with 1 million lines would have 100 list elements, so it is a residual amount. If the `INDEX_INTERVAL` was reduced, this may deserve more consideration.
+
 
 
 
@@ -36,6 +39,7 @@ When I ran 500000 requests with 50000 concurrency, I started getting a "socket: 
 
 
 
+
 ### What documentation, websites, papers, etc did you consult in doing this assignment?
 
 - https://docs.python.org/3/tutorial/inputoutput.html
@@ -50,28 +54,31 @@ When I ran 500000 requests with 50000 concurrency, I started getting a "socket: 
 
 
 
+
 ### What third-party libraries or other tools does the system use? How did you choose each library or framework you used?
 
 FastAPI was chosen for high performance, as well as async capabilities. aiofiles was initially used to read files asynchronously, but after testing with hey (https://github.com/rakyll/hey), the performance was worse than using Python's built-in file reading functions. The reason is probably because we are making small reads (only one line at a time).
 
 
 
+
 ### How long did you spend on this exercise? If you had unlimited more time to spend on this, how would you spend it and how would you prioritize each item?
 
-6-8 hours.
+7-9 hours. Including researching potential problems and solutions, testing with different files, considering different options, coding and answering the questions.
 
 If I had unlimited time, I would:
 - Add a cache
-- Store the line index to a separate database, which would allow it to grow bigger than the available memory in case of really big files and/or a reduction of `INDEX_INTERVAL`. It would also allow pre-processing to only be done once in case of horizontal scaling (since the servers would all read from the same database)
+- Store the line index in a separate database, which would allow it to grow bigger than the available memory in case of really big files and/or a reduction of `INDEX_INTERVAL`. It would also allow pre-processing to only be done once in case of horizontal scaling (since the servers would all read from the same database)
 - Experiment with the `INDEX_INTERVAL` value (currently 10000), to see which number would get the best overall results for our specific use case. The number 10000 was chosen arbitrarily and seems to give acceptable results
 - Scale the system horizontally, allowing more requests to be served concurrently
 - Split the file in chunks and pre-process it in parallel
+- Add tests
 
-I would start by adding a cache, then storing the index in a separate database and then scale horizontally.
+I would start by adding tests, then a cache, then storing the index in a separate database and then scale horizontally.
 
 
 
 
 ### If you were to critique your code, what would you have to say about it?
 
-The code is lacking exception handling, input validation, caching. The index is saved in memory, which puts a size limit on it.
+The code is lacking exception handling, input validation, caching and tests. The index is saved in memory, which puts a size limit on it. I could also move the pre-processing code to a different file, especially if it was part of a bigger project.
