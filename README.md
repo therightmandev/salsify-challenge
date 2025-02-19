@@ -9,22 +9,30 @@ Then, the server is started. For each request, the system gets the nearest index
 ### How will your system perform with a 1 GB file? a 10 GB file? a 100 GB file?
 
 Pre-processing will take proportionally longer with bigger files:
-14MB file -> 5 seconds
-1 GB file -> 179 seconds
-10 GB file -> 1790 seconds (estimate)
+- 14MB file -> 5 seconds
+- 1 GB file -> 179 seconds
+- 10 GB file -> 1790 seconds (estimate)
 
-Responding to each request is the same speed, regardless of file size. If the file gets too big, the index may not fit in memory, and we'd have to move it to a separate database. The number of elements in `LINE_INDEX` is `<number of lines in file> / 10000`. A file with 1 million lines would have 100 list elements, so it is a residual amount. If the `INDEX_INTERVAL` was reduced, this may deserve more consideration.
+Responding to each request is the same speed, regardless of file size.
+For example, here’s the average response time for a test I ran with 2 different files:
+- 14 MB file -> 0.0401 seconds
+- 1 GB file -> 0.0371 seconds
+
+If the file gets too big, the index may not fit in memory, and we'd have to move it to a separate database. The number of elements in `LINE_INDEX` is `<number of lines in file> / 10000`. A file with 1 million lines would have 100 list elements, so it is a residual amount. If the `INDEX_INTERVAL` was reduced, this may deserve more consideration.
 
 
 
 ### How will your system perform with 100 users? 10000 users? 1000000 users?
 
-Testing with hey (https://github.com/rakyll/hey) reveals that 50000 requests sent by 50 concurrent threads were processed efficiently. Here are some relevant stats:
+Testing with hey (https://github.com/rakyll/hey) reveals that 50000 requests sent by 50 concurrent threads were processed efficiently. Here is a relevant statistic:
 - 99% of requests were processed in 0.1022 secs
 
-It is important to note that the test was conducted over a local network. Another important thing to note is that the requests were made to the URL "http://localhost:8000/lines/9999", so the program would have to read 9999 lines. The reason is that the index has the offset for lines 0, 10000, 20000, etc. So the program starts from line 0 and runs f.readline() until it reaches line 9999 and returns the result. This matters because this request performs 9999 more IO operations (f.readline()) than a request to line 0 would.
+It is important to note that the test was conducted over a local network.
+Another important thing to note is that the requests were made to the URL "http://localhost:8000/lines/9999", so the program would have to read 9999 lines. The reason is that the index has the offset for lines 0, 10000, 20000, etc. So the program starts from line 0 and runs f.readline() until it reaches line 9999 and returns the result. This matters because this request performs 9999 more IO operations (f.readline()) than a request to line 0 would.
 
-All in all, the system performed extremely well under load. When I ran 500000 requests with 50000 concurrency, I started getting a "socket: too many open files" error. This seems to be an arbitrary limit imposed by the operating system (https://stackoverflow.com/questions/18280612/ioerror-errno-24-too-many-open-files), but at some point, with too many concurrent requests, the system would likely start to take longer to respond to each request.
+All in all, the system performed extremely well under load.
+
+When I ran 500000 requests with 50000 concurrency, I started getting a "socket: too many open files" error. This seems to be an arbitrary limit imposed by the operating system (https://stackoverflow.com/questions/18280612/ioerror-errno-24-too-many-open-files), but at some point, with too many concurrent requests, the system would likely start to take longer to respond to each request.
 
 
 
