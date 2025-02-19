@@ -31,7 +31,7 @@ Testing with hey (https://github.com/rakyll/hey) reveals that 50000 requests sen
 - 99% of requests were processed in 0.1022 secs
 
 It is important to note that the test was conducted over a local network.
-Another important thing to note is that the requests were made to the URL "http://localhost:8000/lines/9999", so the program would have to read 9999 lines. The reason is that the index has the offset for lines 0, 10000, 20000, etc. So the program starts from line 0 and runs f.readline() until it reaches line 9999 and returns the result. This matters because this request performs 9999 more IO operations (f.readline()) than a request to line 0 would.
+Another important thing to note is that the requests were made to the URL "http://localhost:8000/lines/9999", so the program would have to read 9999 lines. The reason is that the index has the offset for lines 0, 10000, 20000, etc. So the program starts from line 0 and runs `f.readline()` until it reaches line 9999 and returns the result. This matters because this request performs 9999 more IO operations (`f.readline()`) than a request to line 0 would.
 
 All in all, the system performed extremely well under load.
 
