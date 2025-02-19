@@ -57,7 +57,7 @@ When I ran 500000 requests with 50000 concurrency, I started getting a "socket: 
 
 ### What third-party libraries or other tools does the system use? How did you choose each library or framework you used?
 
-FastAPI was chosen for high performance, as well as async capabilities. aiofiles was initially used to read files asynchronously, but after testing with hey (https://github.com/rakyll/hey), the performance was worse than using Python's built-in file reading functions. The reason is probably because we are making small reads (only one line at a time).
+FastAPI was chosen for high performance, as well as async capabilities and ease of development. aiofiles was initially used to read files asynchronously, but after testing with hey (https://github.com/rakyll/hey), the performance was worse than using Python's built-in file reading functions. The reason is probably because we are making small reads (only one line at a time).
 
 
 
