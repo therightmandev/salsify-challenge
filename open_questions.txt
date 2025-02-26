@@ -1,0 +1,8 @@
+Open questions:
+- Can we keep files open and cache the file descriptors to accelerate the reading process?
+- Will running the blocking operation of reading the file in a thread pool allow for more concurrent requests?
+- How will the system be used? Are some lines going to be more frequently accessed than others? This will determine things like the choice of strategy for a cache. 
+- Is there a way to use threads or an async library that would improve request performance, especially at high concurrency?
+- Is FastAPI using uvicorn the most appropriate framework/server for our needs?
+- What is the most optimal server configuration for production? Number of workers, maximum concurrent connections, etc.
+- is f.seek O(1)
