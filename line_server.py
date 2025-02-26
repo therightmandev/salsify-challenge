@@ -11,7 +11,6 @@ app = FastAPI()
 if len(sys.argv) != 2:
     print("Usage: python3 line_server.py <text_file>")
     sys.exit(1)
-    start_server()
 
 FILE = sys.argv[1]
 INDEX_INTERVAL = 10000
