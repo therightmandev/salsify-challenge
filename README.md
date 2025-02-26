@@ -1,8 +1,8 @@
 ### How does your system work? (if not addressed in comments in source)
 
-First, the system pre-processes the file line by line, to avoid loading the entire file into memory. Then, it saves the character offset of every 10000th line in an index called `LINE_INDEX`.
+The system pre-processes the file line by line, to avoid loading the entire file into memory. This happens in the function `create_index`. During this pre-processing, it saves the character offset of every 10000th line in an index called `LINE_INDEX`.
 
-Then, the server is started. For each request, the system gets the closest index entry to the  requested line (for line 21000, it gets `LINE_INDEX[2]`, which corresponds to line 20000) and, starting from the retrieved offset, reads line by line until the specified line is found and returns the line.
+After pre-processing, the server is started. For each request, the system retrieves the index entry for the nearest preceding or matching line. For line 21000, it gets `LINE_INDEX[2]`, which corresponds to line 20000. Starting from the retrieved offset, it reads the file line by line until the specified line is found and returns the line.
 
 
 
@@ -67,12 +67,14 @@ FastAPI was chosen for high performance, as well as async capabilities and ease 
 7-9 hours. Including researching potential problems and solutions, testing with different files, considering different options, coding and answering the questions.
 
 If I had unlimited time, I would:
-- Add a cache
-- Store the line index in a separate database, which would allow it to grow bigger than the available memory in case of really big files and/or a reduction of `INDEX_INTERVAL`. It would also allow pre-processing to only be done once in case of horizontal scaling (since the servers would all read from the same database)
+- Add a cache. The management strategy will depend on how our system is used. For example, are some lines requested more frequently than others? Are lines that were just requested more likely to be requested again in the near future?
+- Store the line index in a separate database, allowing it to grow bigger than the available memory in case of really big files and/or a reduction of `INDEX_INTERVAL`. It would also allow pre-processing to only be done once in case of horizontal scaling, because the servers would all read from the same database
 - Experiment with the `INDEX_INTERVAL` value (currently 10000), to see which number would get the best overall results for our specific use case. The number 10000 was chosen arbitrarily and seems to give acceptable results
 - Scale the system horizontally, allowing more requests to be served concurrently
 - Split the file in chunks and pre-process it in parallel
 - Add tests
+- Add error handling
+- Improve input validation
 
 I would start by adding tests, then a cache, then storing the index in a separate database and then scale horizontally.
 
@@ -81,4 +83,4 @@ I would start by adding tests, then a cache, then storing the index in a separat
 
 ### If you were to critique your code, what would you have to say about it?
 
-The code is lacking exception handling, input validation, caching and tests. The index is saved in memory, which puts a size limit on it. I could also move the pre-processing code to a different file, especially if it was part of a bigger project. Logging should be performed using Python's `logging` module, instead of using `print` statements.
+The code is lacking error handling, input validation, caching and tests. The index is saved in memory, which puts a size limit on it. I could also move the pre-processing code to a different file, especially if it was part of a bigger project. Logging should be performed using Python's `logging` module, instead of using `print` statements.

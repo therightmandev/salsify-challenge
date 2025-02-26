@@ -19,6 +19,7 @@ INDEX_INTERVAL = 10000
 def create_index():
     print("creating index")
     time_counter_start = perf_counter()
+
     line_index = []
     i = 0
     with open(FILE, mode="r", encoding="ascii") as f:
@@ -32,9 +33,11 @@ def create_index():
             offset = f.tell()
             line = f.readline()
             i += 1
+
     print(f"{perf_counter() - time_counter_start} ns")
     print(f"Processed {i} lines in {perf_counter() - time_counter_start} seconds")
     print("returning index")
+    
     return line_index, i
 
 
