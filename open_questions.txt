@@ -5,4 +5,5 @@ Open questions:
 - Is there a way to use threads or an async library that would improve request performance, especially at high concurrency?
 - Is FastAPI using uvicorn the most appropriate framework/server for our needs?
 - What is the most optimal server configuration for production? Number of workers, maximum concurrent connections, etc.
-- is f.seek O(1)
+- Is f.seek O(1)
+- Would memory-mapped files be useful in improving performance of the system?
